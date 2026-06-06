@@ -40,6 +40,7 @@ public class IndexerSub {
         Indexer = hardwareMap.get(Servo.class , "Indexer");
         Beam = hardwareMap.get(RevColorSensorV3.class , "Beam");
         OuttakeContinu = hardwareMap.get(DcMotor.class , "OuttakeContinu");
+        Indexer.setPosition(0.0);
     }
     public void FullReset() {
         if(full && fullTimer.seconds() > 1.0) {
