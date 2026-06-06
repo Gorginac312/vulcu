@@ -81,8 +81,14 @@ public class TeleopBasic extends OpMode {
 
     //LIMELIGHT
     double yaw = 0;
-    double txk =0.02;
-    double yawk = 0.015;
+    double txk =0.04;
+    double yawk = 0.03;
+    double tx = 0;
+    double ty = 0;
+    double ta = 0;
+    double correcttx = 0;
+    double correctyaw = 0;
+
     @Override
     public void init() {
 
@@ -192,6 +198,10 @@ public class TeleopBasic extends OpMode {
         telemetry.addData("balls", balls);
         telemetry.addData("right stick button", gamepad1.right_stick_button);
         telemetry.addData("apriltag", result.isValid());
+        telemetry.addData("tx", tx);
+        telemetry.addData("yaw", yaw);
+        telemetry.addData("correcttx", correcttx);
+        telemetry.addData("correctyaw", correctyaw);
         telemetry.update();
 
         //RESET PENTRU AUTO INDEX//
@@ -222,11 +232,11 @@ public class TeleopBasic extends OpMode {
             return;
         }
 
-        double tx = result.getTx();
-        double ty = result.getTy();
-        double ta = result.getTa();
+        tx = result.getTx();
+        ty = result.getTy();
+        ta = result.getTa();
 
-        double correcttx = tx * txk;
+        correcttx = tx * txk;
 
         if (fiducials.get(0).getTargetPoseCameraSpace() != null) {
             yaw = fiducials.get(0)
@@ -235,7 +245,9 @@ public class TeleopBasic extends OpMode {
                     .getYaw();
         }
 
-        double correctyaw = -yaw * yawk;
+        correctyaw = -yaw * yawk;
+        if (Math.abs(correcttx) < 0.05) correcttx = 0;
+        if (Math.abs(correctyaw) < 0.05) correctyaw = 0;
 
         LF.setPower(correcttx - correctyaw);
         LB.setPower(-correcttx - correctyaw);
