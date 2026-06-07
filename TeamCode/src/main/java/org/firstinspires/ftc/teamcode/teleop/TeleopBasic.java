@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
-@TeleOp (name = "Teleop1", group = "Test")
+@TeleOp (name = "TeleopBasic", group = "Test")
 public class TeleopBasic extends OpMode {
 
     //MOTOARE//

@@ -1,27 +1,21 @@
-package org.firstinspires.ftc.teamcode.SubSystems;
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+package org.firstinspires.ftc.teamcode.unused;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
 
-public class LimelightSub {
+public class LimelightSubOld {
 
     private final Limelight3A limelight;
     private LLResult result;
-    private Pose3D pose;
     public LLResult getresult() {
         return result;}
 
-    public LimelightSub(HardwareMap hardwareMap) {
+    public LimelightSubOld(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         limelight.pipelineSwitch(0);
@@ -39,7 +33,7 @@ public class LimelightSub {
                 return 0;
             }
 
-            return result.getTx() * 0.05;
+            return result.getTx() * 0.04;
         }
         else return 0;
     }
@@ -54,14 +48,15 @@ public class LimelightSub {
 
             if (fiducials == null || fiducials.isEmpty()) return 0;
 
-            fiducials = result.getFiducialResults();
-            Pose3D pose = fiducials.get(0).getTargetPoseCameraSpace();
-
-            double yaw = pose.getOrientation().getYaw();
+            double yaw = fiducials.get(0)
+                    .getTargetPoseCameraSpace()
+                    .getOrientation()
+                    .getYaw();
 
             return -yaw * 0.03;
         }
         else return 0;
     }
 }
+
 

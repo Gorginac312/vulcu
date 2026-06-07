@@ -55,7 +55,7 @@ public class TeleopMain extends OpMode {
         double FinalYaw;
 
         if (gamepad1.right_stick_button) {
-            FinalLateral = CorrectionLateral;
+            FinalLateral = -CorrectionLateral;
             FinalYaw = CorrectionYaw;
         }
         else {
@@ -102,6 +102,10 @@ public class TeleopMain extends OpMode {
             telemetry.addData("sensorEnabled", indexer.getSensorEnabled());
             telemetry.addData("full", indexer.getfull());
             telemetry.addData("balls", indexer.getballs());
+            if(limelight.getresult() != null) telemetry.addData("apriltag", limelight.getresult().isValid());
+            else telemetry.addData("apriltag", null);
+            telemetry.addData("HeadingCorrection" , CorrectionLateral);
+            telemetry.addData("YawCorrection" , CorrectionYaw);
             telemetry.update();
         }
 
