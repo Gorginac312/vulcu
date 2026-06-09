@@ -12,7 +12,7 @@ public class ValuesSub {
     public static double OUTF = 10;
 
     //INTAKE
-    public static double targetINT = 2000;
+    public static double targetINT = 2400;
     public static double TicksPerRevINT = 28;
     public static double INTP = 26;
     public static double INTI = 0;
@@ -20,12 +20,21 @@ public class ValuesSub {
     public static double INTF = 17;
 
     //INDEXER
-    public static double intakepos1 = 0;
-    public static double intakepos2 = 0;
-    public static double intakepos3 = 0;
-    public static double outtakepos1 = 0;
-    public static double outtakepos2 = 0;
-    public static double outtakepos3 = 0;
+    public static double intakepos1 = 0.04;
+    public static double intakepos2 = 0.167;
+    public static double intakepos3 = 0.3;
+    public static double outtakepos1 = 0.1;
+    public static double outtakepos2 = 0.225;
+    public static double outtakepos3 = 0.365;
+
+    //OUTTAKECONTINU
+    public static double outtakepower = 0.5;
+
+    //LIMELIGHT
+    public static double txconstant = 0.06;
+    public static double yawconstant = 0.15;
+    public static double taconstant = 0.2;
+    public static double targetarea = 2;
 
 
 }

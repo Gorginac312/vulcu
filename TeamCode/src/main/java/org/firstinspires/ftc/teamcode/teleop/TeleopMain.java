@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.DriveSub;
 import org.firstinspires.ftc.teamcode.SubSystems.IndexerSub;
@@ -27,6 +28,12 @@ public class TeleopMain extends OpMode {
     double ticksPerSecondIntake = 0;
     double ticksPerSecondOuttake = 0;
 
+    //LIMELIGHT
+    double FinalLateral;
+    double FinalYaw;
+    double FinalAxial;
+
+
 
     @Override
     public void init() {
@@ -50,21 +57,22 @@ public class TeleopMain extends OpMode {
     public void loop() {
         double CorrectionLateral = limelight.getHeadingCorrection(gamepad1.right_stick_button);
         double CorrectionYaw = limelight.getYawCorrection(gamepad1.right_stick_button);
+        double CorrectionAxial = limelight.getTargetCorrection(gamepad1.right_stick_button);
 
-        double FinalLateral;
-        double FinalYaw;
 
         if (gamepad1.right_stick_button) {
             FinalLateral = -CorrectionLateral;
             FinalYaw = CorrectionYaw;
+            FinalAxial = -CorrectionAxial;
         }
         else {
             FinalLateral = gamepad1.left_stick_x;
             FinalYaw = gamepad1.right_stick_x;
+            FinalAxial = -gamepad1.left_stick_y;
         }
 
             drive.drive(
-                    -gamepad1.left_stick_y,
+                    FinalAxial,
                     FinalLateral,
                     FinalYaw,
                     gamepad1.left_bumper ? 0.4 : 1.0);
@@ -81,8 +89,7 @@ public class TeleopMain extends OpMode {
                     gamepad1.left_trigger > 0.05,
                     gamepad1.dpad_right,
                     gamepad1.dpad_left);
-
-            outtake.update2(gamepad1.x);
+            if (indexer.GetIndexState() < 1){outtake.update2(gamepad1.x);}
             outtake.update(
                     gamepad1.right_trigger > 0.05,
                     gamepad1.dpad_down,
@@ -104,6 +111,8 @@ public class TeleopMain extends OpMode {
             telemetry.addData("balls", indexer.getballs());
             if(limelight.getresult() != null) telemetry.addData("apriltag", limelight.getresult().isValid());
             else telemetry.addData("apriltag", null);
+            telemetry.addData("yaw", limelight.getyaw());
+            telemetry.addData("tx" , limelight.gettx());
             telemetry.addData("HeadingCorrection" , CorrectionLateral);
             telemetry.addData("YawCorrection" , CorrectionYaw);
             telemetry.update();

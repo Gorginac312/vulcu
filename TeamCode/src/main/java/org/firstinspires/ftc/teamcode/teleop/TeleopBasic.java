@@ -10,6 +10,8 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.SubSystems.ValuesSub;
+
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -37,15 +39,6 @@ public class TeleopBasic extends OpMode {
     boolean lastB = false;
     int i = 0;//intake//
     int o = 0;//outtake//
-    //pozitii intake indexer//
-    double int1 = 0.065;
-    double int2 = 0.27;
-    double int3 = 0.;
-    //pozitii outtake indexer//
-    double out1 = 0.048;
-    double out2 = 0.175;
-    double out3 = 0.312;
-
 
     //ENCODER//
     double tick_rpm = 28;//constanta pt motor//
@@ -76,13 +69,13 @@ public class TeleopBasic extends OpMode {
     //AUTO INDEX//
     boolean cross = false;//x de pe controller ps//
     boolean lcross = false;//last cross//
-    int IndexState = 0;//6 stateuri pentru intervale de timp intre indexare si outtake//
+    int IndexState = 0;//6 state-uri pentru intervale de timp intre indexare si outtake//
     boolean lrsb = false;
 
     //LIMELIGHT
     double yaw = 0;
-    double txk =0.04;
-    double yawk = 0.03;
+    double txk =0.08;
+    double yawk = 0.15;
     double tx = 0;
     double ty = 0;
     double ta = 0;
@@ -236,7 +229,7 @@ public class TeleopBasic extends OpMode {
         ty = result.getTy();
         ta = result.getTa();
 
-        correcttx = tx * txk;
+        correcttx = tx * ValuesSub.txconstant;
 
         if (fiducials.get(0).getTargetPoseCameraSpace() != null) {
             yaw = fiducials.get(0)
@@ -245,7 +238,7 @@ public class TeleopBasic extends OpMode {
                     .getYaw();
         }
 
-        correctyaw = -yaw * yawk;
+        correctyaw = -yaw * ValuesSub.yawconstant;
         if (Math.abs(correcttx) < 0.05) correcttx = 0;
         if (Math.abs(correctyaw) < 0.05) correctyaw = 0;
 
@@ -259,36 +252,36 @@ public class TeleopBasic extends OpMode {
     public void autoindex() {
         cross = gamepad1.cross;
         if(cross && !lcross && IndexState == 0) {
-            Indexer.setPosition(0.06);
+            Indexer.setPosition(ValuesSub.outtakepos1);
             IndexTime.reset();
             IndexState = 1;
         }
         //asteapta 0.5 sec si executa//
         if(IndexState == 1 && IndexTime.seconds() > 0.5) {
-            OuttakeContinu.setPower(1.0);
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
             IndexTime.reset();
             IndexState = 2;
             //la fel la toate dar se schimba IndexState ca sa se schimbe if-ul executat//
         }
         if(IndexState == 2 && IndexTime.seconds() > 0.5) {
             OuttakeContinu.setPower(0.0);
-            Indexer.setPosition(0.436);
+            Indexer.setPosition(ValuesSub.outtakepos2);
             IndexTime.reset();
             IndexState = 3;
         }
         if(IndexState == 3 && IndexTime.seconds() > 0.5) {
-            OuttakeContinu.setPower(1.0);
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
             IndexTime.reset();
             IndexState = 4;
         }
         if(IndexState == 4 && IndexTime.seconds() > 0.5) {
-            OuttakeContinu.setPower(0.0);
-            Indexer.setPosition(0.821);
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
+            Indexer.setPosition(ValuesSub.outtakepos3);
             IndexTime.reset();
             IndexState = 5;
         }
         if(IndexState == 5 && IndexTime.seconds() > 0.5) {
-            OuttakeContinu.setPower(1.0);
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
             IndexTime.reset();
             IndexState = 6;
         }
@@ -314,9 +307,9 @@ public class TeleopBasic extends OpMode {
     public void updateIndexer() {
         //valori intake indexer pentru senzor//
 
-        if(i == 1)      Indexer.setPosition(int1);
-        else if(i == 2) Indexer.setPosition(int2);
-        else            Indexer.setPosition(int3);
+        if(i == 1)      Indexer.setPosition(ValuesSub.intakepos1);
+        else if(i == 2) Indexer.setPosition(ValuesSub.intakepos2);
+        else            Indexer.setPosition(ValuesSub.intakepos3);
     }
     public void Sensor() {
         double d = Beam.getDistance(DistanceUnit.CM);//distanta masurata intre senzor si obiect//
@@ -343,9 +336,9 @@ public class TeleopBasic extends OpMode {
             i++;
             if(i > 3) i = 1;
 
-            if(i == 1)      Indexer.setPosition(int1);
-            else if(i == 2) Indexer.setPosition(int2);
-            else            Indexer.setPosition(int3);
+            if(i == 1)      Indexer.setPosition(ValuesSub.intakepos1);
+            else if(i == 2) Indexer.setPosition(ValuesSub.intakepos2);
+            else            Indexer.setPosition(ValuesSub.intakepos3);
         }
 
         if(currentB && !lastB) {
@@ -354,9 +347,9 @@ public class TeleopBasic extends OpMode {
             o++;
             if(o > 3) o = 1;
 
-            if(o == 1)      Indexer.setPosition(out1);
-            else if(o == 2) Indexer.setPosition(out2);
-            else            Indexer.setPosition(out3);
+            if(o == 1)      Indexer.setPosition(ValuesSub.outtakepos1);
+            else if(o == 2) Indexer.setPosition(ValuesSub.outtakepos2);
+            else            Indexer.setPosition(ValuesSub.outtakepos3);
         }
 
         lastY = currentY;
@@ -369,7 +362,7 @@ public class TeleopBasic extends OpMode {
         if (gamepad1.right_trigger >= 0.5) {
             MO1.setVelocity(velocity);
         } else {
-            MO1.setVelocity((1000 * tick_rpm)/60);
+            MO1.setVelocity(0.0);
         }
         if (dpu && !ldpu) {
             rpm_fly = rpm_far;//schimba target rpm la far//
@@ -385,7 +378,7 @@ public class TeleopBasic extends OpMode {
     public void Outtake() {
 
         if (gamepad1.x) {
-            OuttakeContinu.setPower(1);
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
         } else {
             OuttakeContinu.setPower(0);
         }
@@ -396,7 +389,7 @@ public class TeleopBasic extends OpMode {
         boolean dpr = gamepad1.dpad_right;
         double IntakeVelocity = (intake_target * tick_rpm)/60;
         if(gamepad1.left_trigger > 0.5) {
-            IntakeMotor.setVelocity(IntakeVelocity);
+            IntakeMotor.setVelocity(ValuesSub.targetINT);
         }
         else {
             IntakeMotor.setVelocity(0.0);

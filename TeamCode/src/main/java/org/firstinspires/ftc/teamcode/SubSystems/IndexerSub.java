@@ -36,6 +36,7 @@ public class IndexerSub {
     public boolean getSensorEnabled() {
         return sensorEnabled;
     }
+    public double GetIndexState() { return IndexState;}
     public IndexerSub(HardwareMap hardwareMap) {
         Indexer = hardwareMap.get(Servo.class , "Indexer");
         Beam = hardwareMap.get(RevColorSensorV3.class , "Beam");
@@ -110,40 +111,26 @@ public class IndexerSub {
     }
     public void autoindex(boolean AutoOn) {
         if(AutoOn && !lastAutoOn && IndexState == 0) {
+            IndexState = 1;
             Indexer.setPosition(ValuesSub.outtakepos1);
             IndexTime.reset();
-            IndexState = 1;
+        }
+        if(IndexState != 0) {
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
         }
         if(IndexState == 1 && IndexTime.seconds() > 0.5) {
-            OuttakeContinu.setPower(1.0);
+            Indexer.setPosition(ValuesSub.outtakepos2);
             IndexTime.reset();
             IndexState = 2;
         }
         if(IndexState == 2 && IndexTime.seconds() > 0.5) {
-            OuttakeContinu.setPower(0.0);
-            Indexer.setPosition(ValuesSub.outtakepos2);
+            Indexer.setPosition(ValuesSub.outtakepos3);
             IndexTime.reset();
             IndexState = 3;
         }
         if(IndexState == 3 && IndexTime.seconds() > 0.5) {
-            OuttakeContinu.setPower(1.0);
-            IndexTime.reset();
-            IndexState = 4;
-        }
-        if(IndexState == 4 && IndexTime.seconds() > 0.5) {
-            OuttakeContinu.setPower(0.0);
-            Indexer.setPosition(ValuesSub.outtakepos3);
-            IndexTime.reset();
-            IndexState = 5;
-        }
-        if(IndexState == 5 && IndexTime.seconds() > 0.5) {
-            OuttakeContinu.setPower(1.0);
-            IndexTime.reset();
-            IndexState = 6;
-        }
-        if(IndexState == 6 && IndexTime.seconds() > 0.5) {
-            OuttakeContinu.setPower(0.0);
             IndexState = 0;
+            IndexTime.reset();
         }
 
         lastAutoOn = AutoOn;

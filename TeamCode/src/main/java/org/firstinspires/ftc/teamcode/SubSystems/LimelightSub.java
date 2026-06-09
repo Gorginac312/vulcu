@@ -20,6 +20,9 @@ public class LimelightSub {
     private Pose3D pose;
     public LLResult getresult() {
         return result;}
+    double yaw;
+    double tx;
+    double ta;
 
     public LimelightSub(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -28,8 +31,28 @@ public class LimelightSub {
         limelight.start();
     }
 
+public double gettx() {
+        return tx;
+}
+public double getyaw() {
+        return yaw;
+}
 
+public double getTargetCorrection(boolean control) {
+        if (control) {
+            LLResult result = limelight.getLatestResult();
 
+            if (result == null || !result.isValid()) {
+                return 0;
+            }
+
+            ta = result.getTa();
+            if(ta == ValuesSub.targetarea) return 0;
+            else return ta * ValuesSub.taconstant;
+
+        }
+        else return 0;
+}
     public double getHeadingCorrection(boolean control) {
         if (control) {
 
@@ -38,8 +61,8 @@ public class LimelightSub {
             if (result == null || !result.isValid()) {
                 return 0;
             }
-
-            return result.getTx() * 0.05;
+            tx = result.getTx();
+            return tx * ValuesSub.txconstant;
         }
         else return 0;
     }
@@ -57,9 +80,9 @@ public class LimelightSub {
             fiducials = result.getFiducialResults();
             Pose3D pose = fiducials.get(0).getTargetPoseCameraSpace();
 
-            double yaw = pose.getOrientation().getYaw();
+            yaw = pose.getOrientation().getYaw();
 
-            return -yaw * 0.03;
+            return -yaw * ValuesSub.yawconstant;
         }
         else return 0;
     }

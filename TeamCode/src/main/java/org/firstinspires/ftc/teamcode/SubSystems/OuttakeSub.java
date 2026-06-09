@@ -46,7 +46,7 @@ public class OuttakeSub {
 
     public void update2(boolean OuttakeOn2){
         if(OuttakeOn2) {
-            OuttakeContinu.setPower(0.5);
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
         }
         else {
             OuttakeContinu.setPower(0.0);

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.unused;
+package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.SubSystems.ValuesSub;
+
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "teleop2", group = "Test")
@@ -132,20 +134,20 @@ public class teleop2 extends OpMode {
     public void autoindex() {
         cross = gamepad1.cross;
         if(cross && !lcross && IndexState == 0) {
-            Indexer.setPosition(0.06);
+            Indexer.setPosition(ValuesSub.outtakepos1);
             IndexTime.reset();
             IndexState = 1;
         }
         if(IndexState != 0) {
-            OuttakeContinu.setPower(1.0);
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
         }
         if(IndexState == 1 && IndexTime.seconds() > 0.5) {
-            Indexer.setPosition(0.436);
+            Indexer.setPosition(ValuesSub.outtakepos2);
             IndexTime.reset();
             IndexState = 2;
         }
         if(IndexState == 2 && IndexTime.seconds() > 0.5) {
-            Indexer.setPosition(0.821);
+            Indexer.setPosition(ValuesSub.outtakepos3);
             IndexTime.reset();
             IndexState = 3;
         }
@@ -170,9 +172,9 @@ public class teleop2 extends OpMode {
     }
     public void updateIndexer() {
 
-        if(o == 1)      Indexer.setPosition(0.238);
-        else if(o == 2) Indexer.setPosition(0.62);
-        else            Indexer.setPosition(1);
+        if(o == 1)      Indexer.setPosition(ValuesSub.intakepos1);
+        else if(o == 2) Indexer.setPosition(ValuesSub.intakepos2);
+        else            Indexer.setPosition(ValuesSub.intakepos3);
     }
     public void Sensor() {
         double d = Beam.getDistance(DistanceUnit.CM);
@@ -199,9 +201,9 @@ public class teleop2 extends OpMode {
             o++;
             if(o > 3) o = 1;
 
-            if(o == 1)      Indexer.setPosition(0.238);
-            else if(o == 2) Indexer.setPosition(0.62);
-            else            Indexer.setPosition(1);
+            if(o == 1)      Indexer.setPosition(ValuesSub.intakepos1);
+            else if(o == 2) Indexer.setPosition(ValuesSub.intakepos2);
+            else            Indexer.setPosition(ValuesSub.intakepos3);
         }
 
         if(currentB && !lastB) {
@@ -210,9 +212,9 @@ public class teleop2 extends OpMode {
             i++;
             if(i > 3) i = 1;
 
-            if(i == 1)      Indexer.setPosition(0.06);
-            else if(i == 2) Indexer.setPosition(0.436);
-            else            Indexer.setPosition(0.821);
+            if(i == 1)      Indexer.setPosition(ValuesSub.outtakepos1);
+            else if(i == 2) Indexer.setPosition(ValuesSub.outtakepos2);
+            else            Indexer.setPosition(ValuesSub.outtakepos3);
         }
 
         lastY = currentY;
@@ -225,7 +227,7 @@ public class teleop2 extends OpMode {
         if (gamepad1.right_trigger >= 0.5) {
             MO1.setVelocity(velocity);
         } else {
-            MO1.setVelocity((1000 * tick_rpm)/60);
+            MO1.setVelocity(0.0);
         }
         if (dpu && !ldpu) {
             rpm_fly = rpm_far;
@@ -241,7 +243,7 @@ public class teleop2 extends OpMode {
     public void Outtake() {
 
         if (gamepad1.x) {
-            OuttakeContinu.setPower(0.5);
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
         } else {
             OuttakeContinu.setPower(0);
         }
@@ -252,7 +254,7 @@ public class teleop2 extends OpMode {
         boolean dpr = gamepad1.dpad_right;
         double IntakeVelocity = (intake_rpm * tick_rpm)/60;
         if(gamepad1.left_trigger > 0.5) {
-            IntakeMotor.setVelocity(IntakeVelocity);
+            IntakeMotor.setVelocity(ValuesSub.targetINT);
         }
         else {
             IntakeMotor.setVelocity(0.0);
