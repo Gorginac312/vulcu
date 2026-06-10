@@ -20,15 +20,15 @@ public class ValuesSub {
     public static double INTF = 17;
 
     //INDEXER
-    public static double intakepos1 = 0.04;
-    public static double intakepos2 = 0.167;
-    public static double intakepos3 = 0.3;
+    public static double intakepos1 = 0.03;
+    public static double intakepos2 = 0.16;
+    public static double intakepos3 = 0.29;
     public static double outtakepos1 = 0.1;
-    public static double outtakepos2 = 0.225;
-    public static double outtakepos3 = 0.365;
+    public static double outtakepos2 = 0.22;
+    public static double outtakepos3 = 0.35;
 
     //OUTTAKECONTINU
-    public static double outtakepower = 0.5;
+    public static double outtakepower = 0.67;//🤣🤣🤣
 
     //LIMELIGHT
     public static double txconstant = 0.06;
