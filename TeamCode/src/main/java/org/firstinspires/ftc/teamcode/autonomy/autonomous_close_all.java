@@ -13,8 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.SubSystems.IndexerSub;
 
-@Autonomous(name = "autonomous_close_open", group = "Test")
-public class autonomous_close_open extends LinearOpMode {
+@Autonomous(name = "autonomous_close_all", group = "Test")
+public class autonomous_close_all extends LinearOpMode {
     private static final double kP_XY = 0.010;
     private static final double kP_HEADING = 0.010;
 
@@ -35,10 +35,10 @@ public class autonomous_close_open extends LinearOpMode {
     private GoBildaPinpointDriver pinpoint;
     private IndexerSub indexer;
     ElapsedTime timeout = new ElapsedTime();
-
     @Override
     public void runOpMode() {
         indexer = new IndexerSub(hardwareMap);
+
 
         RF = hardwareMap.get(DcMotor.class, "RF");
         RB = hardwareMap.get(DcMotor.class, "RB");
@@ -70,6 +70,7 @@ public class autonomous_close_open extends LinearOpMode {
         telemetry.update();
 
         pinpoint.resetPosAndIMU();
+
         sleep(1000);
 
         pinpoint.setPosition(
@@ -80,7 +81,7 @@ public class autonomous_close_open extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        timeout.reset();
+
         if (opModeIsActive()) {
             driveToPose(-76, 35, 84, 0.3);//outtake
             timeout.reset();
@@ -88,6 +89,7 @@ public class autonomous_close_open extends LinearOpMode {
                 telemetry.addLine("Outtaking...");
                 telemetry.update();
             }
+
             driveToPose(121, 65, 310, 0.3);//first row
             timeout.reset();
             while (opModeIsActive() && !indexer.autonomyintake() && timeout.seconds() < 5) {
@@ -112,7 +114,18 @@ public class autonomous_close_open extends LinearOpMode {
                 telemetry.addLine("Outtaking...");
                 telemetry.update();
             }
-            driveToPose(-85 , 160 , 220 , 0.3);
+            driveToPose(201, 156, 310, 0.3);//third row
+            timeout.reset();
+            while (opModeIsActive() && !indexer.autonomyintake() && timeout.seconds() < 5) {
+                telemetry.addLine("Intaking...");
+                telemetry.update();
+            }
+            driveToPose(-76, 35, 84, 0.3);//outtake
+            timeout.reset();
+            while (opModeIsActive() && !indexer.autonomyouttake() && timeout.seconds() < 5) {
+                telemetry.addLine("Outtaking...");
+                telemetry.update();
+            }
 
             stopDrive();
         }
