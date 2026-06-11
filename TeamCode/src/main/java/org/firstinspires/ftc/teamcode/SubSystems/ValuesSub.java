@@ -37,8 +37,8 @@ public class ValuesSub {
     public static double targetarea = 2;
 
     //INTAKESERVO
-    public static double servoint = 0;
-    public static double servoout = 0;
+    public static double servoint = 0.5;
+    public static double servoout = 0.65;
 
 
 }

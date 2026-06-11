@@ -11,9 +11,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class IndexerSub {
     private DriveSub drive;
     private final Servo Indexer;
+    private final Servo IntakeServo;
     private final RevColorSensorV3 Beam;
     private final DcMotor OuttakeContinu;
     private final DcMotorEx MO1;
+    private final DcMotorEx IntakeMotor;
     //manual
     private boolean lastintake = false;
     private boolean lastouttake = false;
@@ -45,8 +47,15 @@ public class IndexerSub {
         Beam = hardwareMap.get(RevColorSensorV3.class , "Beam");
         OuttakeContinu = hardwareMap.get(DcMotor.class , "OuttakeContinu");
         MO1 = hardwareMap.get(DcMotorEx.class , "MO1");
+        IntakeMotor = hardwareMap.get(DcMotorEx.class , "IntakeMotor");
+        IntakeServo = hardwareMap.get(Servo.class , "IntakeServo");
         Indexer.setPosition(0.0);
+        IntakeServo.setPosition(0.65);
         drive = new DriveSub(hardwareMap);
+    }
+    public void IntakeServo(boolean toggle) {
+        if(toggle) {IntakeServo.setPosition(0.5);}
+        else {IntakeServo.setPosition(0.65);}
     }
     public void FullReset() {
         if(full && fullTimer.seconds() > 1.0) {
@@ -68,7 +77,7 @@ public class IndexerSub {
     }
     public void Sensor() {
         double d = Beam.getDistance(DistanceUnit.CM);
-        boolean isClose = (d < 2);
+        boolean isClose = (d < 5);
         if(isClose && !objectDetected) {
             i++;
             if(i > 3) i = 1;
@@ -153,40 +162,56 @@ public class IndexerSub {
         }
     }
 
-    public void autonomyintake() {
-        drive.drive(-0.2,0,0,1.0);
-        sensorEnabled = true;
-        AutonomySensorToggle();
-        if(!sensorEnabled){drive.drive(0,0,0,1.0);}
+    public boolean autonomyintake() {
+        Sensor();
 
-    }
-    public void autonomyouttake() {
+        if (full) {
+            drive.drive(0, 0, 0, 1.0);
+            IntakeMotor.setPower(0.0);
+            return true;
+        }
+        IntakeMotor.setPower(ValuesSub.targetINT);
+        drive.drive(-0.2, 0, 0, 1.0);
+
+        return false;
+    }public boolean autonomyouttake() {
         if (IndexState == 0) {
             IndexState = 1;
             Indexer.setPosition(ValuesSub.outtakepos1);
             IndexTime.reset();
-        }
-        if (IndexState != 0) {
+
             OuttakeContinu.setPower(ValuesSub.outtakepower);
             MO1.setVelocity(ValuesSub.targetOUT);
+
+            return false;
         }
+
         if (IndexState == 1 && IndexTime.seconds() > 0.5) {
             Indexer.setPosition(ValuesSub.outtakepos2);
             IndexTime.reset();
             IndexState = 2;
+
+            return false;
         }
+
         if (IndexState == 2 && IndexTime.seconds() > 0.5) {
             Indexer.setPosition(ValuesSub.outtakepos3);
             IndexTime.reset();
             IndexState = 3;
+
+            return false;
         }
+
         if (IndexState == 3 && IndexTime.seconds() > 0.5) {
             IndexState = 0;
             IndexTime.reset();
+
             MO1.setVelocity(0.0);
             OuttakeContinu.setPower(0.0);
+
+            return true;
         }
 
+        return false;
     }
-
 }

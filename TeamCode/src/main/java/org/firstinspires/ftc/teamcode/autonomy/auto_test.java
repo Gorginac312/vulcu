@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.autonomy;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -12,8 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.SubSystems.IndexerSub;
 
-@Autonomous(name = "autonomous_close_open", group = "Test")
-public class autonomous_close_open extends LinearOpMode {
+@Autonomous(name = "auto_test", group = "Test")
+public class auto_test extends LinearOpMode {
     private static final double kP_XY = 0.010;
     private static final double kP_HEADING = 0.010;
 
@@ -32,11 +31,7 @@ public class autonomous_close_open extends LinearOpMode {
 
     private DcMotor RF, RB, LF, LB;
     private GoBildaPinpointDriver pinpoint;
-    private IndexerSub indexer;
-
-    @Override
     public void runOpMode() {
-        indexer = new IndexerSub(hardwareMap);
 
         RF = hardwareMap.get(DcMotor.class, "RF");
         RB = hardwareMap.get(DcMotor.class, "RB");
@@ -81,20 +76,8 @@ public class autonomous_close_open extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            driveToPose(-76, 35, 84, 0.3);
+            driveToPose(-0, 50, 0, 0.25);
             sleep(3000);
-            while (opModeIsActive() && !indexer.autonomyouttake()) {
-                telemetry.addLine("Outtaking...");
-                telemetry.update();
-            }
-
-            driveToPose(121, 65, 310, 0.3);
-            sleep(3000);
-
-            while (opModeIsActive() && !indexer.autonomyintake()) {
-                telemetry.addLine("Intaking...");
-                telemetry.update();
-            }
 
             stopDrive();
         }
@@ -224,3 +207,5 @@ public class autonomous_close_open extends LinearOpMode {
         return degrees;
     }
 }
+
+

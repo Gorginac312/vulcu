@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.DriveSub;
@@ -24,7 +25,6 @@ public class TeleopMain extends OpMode {
     LimelightSub limelight;
 
     //MOTOARE//
-    DcMotor Elevate;//elevate, nefolosit//
     double ticksPerSecondIntake = 0;
     double ticksPerSecondOuttake = 0;
 
@@ -38,7 +38,6 @@ public class TeleopMain extends OpMode {
     @Override
     public void init() {
 
-        Elevate = hardwareMap.get(DcMotor.class , "Elevate");
         drive = new DriveSub(hardwareMap);
         intake = new IntakeSub(hardwareMap);
         outtake = new OuttakeSub(hardwareMap);
@@ -78,12 +77,14 @@ public class TeleopMain extends OpMode {
                     gamepad1.left_bumper ? 0.4 : 1.0);
 
 
+            indexer.IntakeServo(gamepad1.right_bumper);
             indexer.FullReset();
             indexer.autoindex(gamepad1.cross);
             indexer.IndexManual(gamepad1.y,
                     gamepad1.b);
             indexer.SensorToggle(gamepad1.left_stick_button);
             if (indexer.getSensorEnabled()) indexer.Sensor();
+
 
             intake.update(
                     gamepad1.left_trigger > 0.05,

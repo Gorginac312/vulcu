@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -34,7 +36,8 @@ public class test_intakeservo extends OpMode {
     boolean ldpu = false;
     public void init() {
         IntakeServo = hardwareMap.get(Servo.class , "IntakeServo");
-        IntakeServo.setPosition(0.0);
+        IntakeServo.setDirection(REVERSE);
+        IntakeServo.setPosition(0.5);
     }
 
     @Override
