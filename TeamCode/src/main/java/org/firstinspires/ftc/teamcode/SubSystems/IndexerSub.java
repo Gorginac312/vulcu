@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -8,9 +9,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class IndexerSub {
+    private DriveSub drive;
     private final Servo Indexer;
     private final RevColorSensorV3 Beam;
     private final DcMotor OuttakeContinu;
+    private final DcMotorEx MO1;
     //manual
     private boolean lastintake = false;
     private boolean lastouttake = false;
@@ -41,7 +44,9 @@ public class IndexerSub {
         Indexer = hardwareMap.get(Servo.class , "Indexer");
         Beam = hardwareMap.get(RevColorSensorV3.class , "Beam");
         OuttakeContinu = hardwareMap.get(DcMotor.class , "OuttakeContinu");
+        MO1 = hardwareMap.get(DcMotorEx.class , "MO1");
         Indexer.setPosition(0.0);
+        drive = new DriveSub(hardwareMap);
     }
     public void FullReset() {
         if(full && fullTimer.seconds() > 1.0) {
@@ -136,6 +141,52 @@ public class IndexerSub {
         lastAutoOn = AutoOn;
 
     }
+    public void AutonomySensorToggle(){
+        if(full) {
+            sensorEnabled = false;//se opreste automat dupa 3 bile//
+        }
+        if(!full) {
+            sensorEnabled = !sensorEnabled;//daca nu sunt 3 bile si este apasat joystick left sensorEnabled devine true//
+        }
+        if(sensorEnabled) {
+            Sensor();
+        }
+    }
 
+    public void autonomyintake() {
+        drive.drive(-0.2,0,0,1.0);
+        sensorEnabled = true;
+        AutonomySensorToggle();
+        if(!sensorEnabled){drive.drive(0,0,0,1.0);}
+
+    }
+    public void autonomyouttake() {
+        if (IndexState == 0) {
+            IndexState = 1;
+            Indexer.setPosition(ValuesSub.outtakepos1);
+            IndexTime.reset();
+        }
+        if (IndexState != 0) {
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
+            MO1.setVelocity(ValuesSub.targetOUT);
+        }
+        if (IndexState == 1 && IndexTime.seconds() > 0.5) {
+            Indexer.setPosition(ValuesSub.outtakepos2);
+            IndexTime.reset();
+            IndexState = 2;
+        }
+        if (IndexState == 2 && IndexTime.seconds() > 0.5) {
+            Indexer.setPosition(ValuesSub.outtakepos3);
+            IndexTime.reset();
+            IndexState = 3;
+        }
+        if (IndexState == 3 && IndexTime.seconds() > 0.5) {
+            IndexState = 0;
+            IndexTime.reset();
+            MO1.setVelocity(0.0);
+            OuttakeContinu.setPower(0.0);
+        }
+
+    }
 
 }

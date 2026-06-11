@@ -10,10 +10,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp (name = "test_indexer", group = "Test")
+@TeleOp (name = "test_intakeservo", group = "Test")
 
-public class test_indexer extends OpMode {
-    Servo Indexer;
+public class test_intakeservo extends OpMode {
+    Servo IntakeServo;
     boolean lastY = false;
     boolean lastB = false;
     int i = 0;//intake//
@@ -33,8 +33,8 @@ public class test_indexer extends OpMode {
     boolean ldpd = false;
     boolean ldpu = false;
     public void init() {
-        Indexer = hardwareMap.get(Servo.class , "Indexer");
-        Indexer.setPosition(0.0);
+        IntakeServo = hardwareMap.get(Servo.class , "IntakeServo");
+        IntakeServo.setPosition(0.0);
     }
 
     @Override
@@ -84,10 +84,10 @@ public class test_indexer extends OpMode {
     }
     private void IndexPose() {
         if(gamepad1.left_bumper) {
-            Indexer.setPosition(INT);
+            IntakeServo.setPosition(INT);
         }
         if(gamepad1.right_bumper) {
-            Indexer.setPosition(OUT);
+            IntakeServo.setPosition(OUT);
         }
     }
 

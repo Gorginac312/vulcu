@@ -292,6 +292,7 @@ public class DriveTulumba_V6 extends OpMode {
         telemetry.addData("Fly Actual RPM", "%.1f", outtake.getFlyWheelRPM());
 
         telemetry.update();
+        return 0;
     }
 
     private void updateComputedAutoRpm() {

@@ -8,12 +8,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
-@Autonomous(name = "autonomy_main   ", group = "Test")
-public class autonomy_main extends OpMode {
+@Autonomous(name = "autonomous_telemetry", group = "Test")
+public class autonomous_telemetry extends OpMode {
 
     GoBildaPinpointDriver pinpoint;
     boolean lastA = false;
-
+    private double getHeadingDeg() {
+        return pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES);
+    }
+    private double normalize360(double angleDeg) {
+        angleDeg %= 360.0;
+        if (angleDeg < 0.0) angleDeg += 360.0;
+        return angleDeg;
+    }
     @Override
     public void init() {
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
@@ -26,7 +33,7 @@ public class autonomy_main extends OpMode {
 
         pinpoint.setEncoderDirections(
                 GoBildaPinpointDriver.EncoderDirection.FORWARD,
-                GoBildaPinpointDriver.EncoderDirection.FORWARD
+                GoBildaPinpointDriver.EncoderDirection.REVERSED
         );
 
         pinpoint.resetPosAndIMU();
@@ -57,10 +64,11 @@ public class autonomy_main extends OpMode {
 
         telemetry.addData("Status", pinpoint.getDeviceStatus());
         telemetry.addData("Heading deg", "%.2f", pinpoint.getHeading(AngleUnit.DEGREES));
-        telemetry.addData("Turn deg/s", "%.2f",
-                pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
+        telemetry.addData("Heading 0-360 deg", "%.2f", normalize360(getHeadingDeg()));
         telemetry.addData("X cm", "%.2f", pinpoint.getPosX(DistanceUnit.CM));
         telemetry.addData("Y cm", "%.2f", pinpoint.getPosY(DistanceUnit.CM));
         telemetry.update();
+
+        return 0;
     }
 }
