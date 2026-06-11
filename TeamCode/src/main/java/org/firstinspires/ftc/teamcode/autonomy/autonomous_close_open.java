@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.SubSystems.IndexerSub;
 
-@Autonomous(name = "autonomous_main", group = "Test")
+@Autonomous(name = "autonomous_close_open", group = "Test")
 public class autonomous_close_open extends LinearOpMode {
     private double getHeadingDeg() {
         return pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES);

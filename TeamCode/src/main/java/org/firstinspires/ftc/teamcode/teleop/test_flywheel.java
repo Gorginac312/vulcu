@@ -41,7 +41,6 @@ public class test_flywheel extends OpMode {
 
         telemetry.update();
 
-        return 0;
     }
     public void Kp() {
         boolean dpl = gamepad1.dpad_left;

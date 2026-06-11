@@ -116,7 +116,6 @@ public class TeleopMain extends OpMode {
             telemetry.addData("HeadingCorrection" , CorrectionLateral);
             telemetry.addData("YawCorrection" , CorrectionYaw);
             telemetry.update();
-        return CorrectionLateral;
     }
 
 

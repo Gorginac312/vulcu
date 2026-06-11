@@ -128,8 +128,6 @@ public class teleop2 extends OpMode {
             balls = 0;
         }
 
-
-        return ticksPerSecond;
     }
     public void autoindex() {
         cross = gamepad1.cross;

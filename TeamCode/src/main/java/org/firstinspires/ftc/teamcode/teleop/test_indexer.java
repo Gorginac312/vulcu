@@ -52,7 +52,7 @@ public class test_indexer extends OpMode {
         telemetry.addData("OUT" , OUT);
         telemetry.update();
 
-        return 0;
+
     }
     private void UPD() {
         boolean dpl = gamepad1.dpad_left;

@@ -204,8 +204,6 @@ public class TeleopBasic extends OpMode {
             balls = 0;
         }
 
-
-        return ticksPerSecond;
     }
     public void limelight() {
 
