@@ -11,7 +11,9 @@ import org.firstinspires.ftc.teamcode.GoBildaPinpointDriver;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.SubSystems.DriveSub;
 import org.firstinspires.ftc.teamcode.SubSystems.IndexerSub;
+import org.firstinspires.ftc.teamcode.SubSystems.LimelightSub;
 
 @Autonomous(name = "autonomous_close_all", group = "Test")
 public class autonomous_close_all extends LinearOpMode {
@@ -26,18 +28,91 @@ public class autonomous_close_all extends LinearOpMode {
 
     private static final double MAX_TURN_POWER = 0.18;
 
-    // Change these to -1 one at a time if an axis goes backwards
-    private static final double FORWARD_SIGN = 1.0;
-    private static final double STRAFE_SIGN = 1.0;
-    private static final double TURN_SIGN = 1.0;
-
     private DcMotor RF, RB, LF, LB;
     private GoBildaPinpointDriver pinpoint;
     private IndexerSub indexer;
+    private DriveSub drive;
+    private LimelightSub limelight;
     ElapsedTime timeout = new ElapsedTime();
-    @Override
+    private boolean limelightAlign(double timeoutSeconds, double noTargetSkipSeconds) {
+        ElapsedTime timer = new ElapsedTime();
+        ElapsedTime stableTimer = new ElapsedTime();
+        ElapsedTime noTargetTimer = new ElapsedTime();
+
+        boolean wasStable = false;
+        boolean hasSeenTarget = false;
+
+        timer.reset();
+        stableTimer.reset();
+        noTargetTimer.reset();
+
+        while (opModeIsActive() && timer.seconds() < timeoutSeconds) {
+            limelight.update();
+
+            if (limelight.getresult() == null || !limelight.getresult().isValid()) {
+                stopDrive();
+
+                telemetry.addLine("Limelight: no target");
+                telemetry.update();
+
+                if (!hasSeenTarget && noTargetTimer.seconds() > noTargetSkipSeconds) {
+                    return false;
+                }
+
+                wasStable = false;
+                stableTimer.reset();
+                continue;
+            }
+
+            hasSeenTarget = true;
+            noTargetTimer.reset();
+
+            double turnCorrection = limelight.getHeadingCorrection(true);
+            double forwardCorrection = limelight.getTargetCorrection(true);
+
+            turnCorrection = clip(turnCorrection, -0.18, 0.18);
+            forwardCorrection = clip(forwardCorrection, -0.14, 0.14);
+
+            boolean aligned =
+                    Math.abs(turnCorrection) < 0.025 &&
+                            Math.abs(forwardCorrection) < 0.025;
+
+            if (aligned) {
+                if (!wasStable) {
+                    stableTimer.reset();
+                    wasStable = true;
+                }
+
+                if (stableTimer.seconds() > 0.20) {
+                    stopDrive();
+                    return true;
+                }
+            } else {
+                wasStable = false;
+                stableTimer.reset();
+            }
+
+            drive.drive(
+                    forwardCorrection,
+                    0,
+                    turnCorrection,
+                    1.0
+            );
+
+            telemetry.addLine("Limelight aligning...");
+            telemetry.addData("tx", "%.2f", limelight.gettx());
+            telemetry.addData("turn correction", "%.3f", turnCorrection);
+            telemetry.addData("forward correction", "%.3f", forwardCorrection);
+            telemetry.update();
+        }
+
+        stopDrive();
+        return false;
+    }@Override
     public void runOpMode() {
         indexer = new IndexerSub(hardwareMap);
+        limelight = new LimelightSub(hardwareMap);
+        drive = new DriveSub(hardwareMap);
 
 
         RF = hardwareMap.get(DcMotor.class, "RF");
@@ -83,20 +158,25 @@ public class autonomous_close_all extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            driveToPose(-76, 35, 84, 0.3);//outtake
+            driveToPose(-76, 35, 84, 0.3);
+            boolean aligned = limelightAlign(1.5, 0.35);
+            telemetry.addData("Limelight aligned", aligned);
+            telemetry.update();
             timeout.reset();
             while (opModeIsActive() && !indexer.autonomyouttake() && timeout.seconds() < 5) {
                 telemetry.addLine("Outtaking...");
                 telemetry.update();
             }
-
             driveToPose(121, 65, 310, 0.3);//first row
             timeout.reset();
             while (opModeIsActive() && !indexer.autonomyintake() && timeout.seconds() < 5) {
                 telemetry.addLine("Intaking...");
                 telemetry.update();
             }
-            driveToPose(-76, 35, 84, 0.3);//outtake
+            driveToPose(-76, 35, 84, 0.3);
+            aligned = limelightAlign(1.5, 0.35);
+            telemetry.addData("Limelight aligned", aligned);
+            telemetry.update();
             timeout.reset();
             while (opModeIsActive() && !indexer.autonomyouttake() && timeout.seconds() < 5) {
                 telemetry.addLine("Outtaking...");
@@ -109,6 +189,9 @@ public class autonomous_close_all extends LinearOpMode {
                 telemetry.update();
             }
             driveToPose(-76, 35, 84, 0.3);//outtake
+            aligned = limelightAlign(1.5, 0.35);
+            telemetry.addData("Limelight aligned", aligned);
+            telemetry.update();
             timeout.reset();
             while (opModeIsActive() && !indexer.autonomyouttake() && timeout.seconds() < 5) {
                 telemetry.addLine("Outtaking...");
@@ -120,7 +203,10 @@ public class autonomous_close_all extends LinearOpMode {
                 telemetry.addLine("Intaking...");
                 telemetry.update();
             }
-            driveToPose(-76, 35, 84, 0.3);//outtake
+            driveToPose(-76, 35, 84, 0.3);
+            aligned = limelightAlign(1.5, 0.35);
+            telemetry.addData("Limelight aligned", aligned);
+            telemetry.update();
             timeout.reset();
             while (opModeIsActive() && !indexer.autonomyouttake() && timeout.seconds() < 5) {
                 telemetry.addLine("Outtaking...");
@@ -195,10 +281,10 @@ public class autonomous_close_all extends LinearOpMode {
                 }
             }
 
-            mecanumDrive(
-                    FORWARD_SIGN * forwardPower,
-                    STRAFE_SIGN * strafePower,
-                    TURN_SIGN * turnPower
+            drive.drive(forwardPower,
+                    strafePower,
+                    turnPower,
+                    1.0
             );
 
             telemetry.addData("Target X cm", targetXcm);
@@ -210,9 +296,9 @@ public class autonomous_close_all extends LinearOpMode {
             telemetry.addData("Error Y cm", "%.2f", errorY);
             telemetry.addData("Distance Error cm", "%.2f", distanceError);
             telemetry.addData("Error Heading", "%.2f", errorHeading);
-            telemetry.addData("Forward Power", "%.2f", FORWARD_SIGN * forwardPower);
-            telemetry.addData("Strafe Power", "%.2f", STRAFE_SIGN * strafePower);
-            telemetry.addData("Turn Power", "%.2f", TURN_SIGN * turnPower);
+            telemetry.addData("Forward Power", "%.2f", forwardPower);
+            telemetry.addData("Strafe Power", "%.2f", strafePower);
+            telemetry.addData("Turn Power", "%.2f", turnPower);
             telemetry.update();
         }
 
