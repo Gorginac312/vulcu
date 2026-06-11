@@ -35,6 +35,7 @@ public class ValuesSub {
     public static double yawconstant = 0.15;
     public static double taconstant = 0.2;
     public static double targetarea = 2;
+    public static double taTolerance = 0.2;
 
     //INTAKESERVO
     public static double servoint = 0.5;

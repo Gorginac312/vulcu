@@ -56,6 +56,7 @@ public class TeleopMain extends OpMode {
 
 
     public void loop() {
+        limelight.update();
         double CorrectionLateral = limelight.getHeadingCorrection(gamepad1.right_stick_button);
         double CorrectionYaw = limelight.getYawCorrection(gamepad1.right_stick_button);
         double CorrectionAxial = limelight.getTargetCorrection(gamepad1.right_stick_button);
