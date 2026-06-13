@@ -16,13 +16,6 @@ apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
 android {
-    sourceSets {
-        main {
-            java {
-                exclude 'org/firstinspires/ftc/teamcode/unused/**'
-            }
-        }
-    }
     namespace = 'org.firstinspires.ftc.teamcode'
 
     packagingOptions {
