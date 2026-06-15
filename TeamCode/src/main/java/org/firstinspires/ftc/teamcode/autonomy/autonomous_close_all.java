@@ -20,8 +20,8 @@ public class autonomous_close_all extends LinearOpMode {
     private static final double kP_XY = 0.010;
     private static final double kP_HEADING = 0.010;
 
-    private static final double POSITION_TOLERANCE_CM = 3.0;
-    private static final double HEADING_TOLERANCE_DEG = 4.0;
+    private static final double POSITION_TOLERANCE_CM = 6.0;
+    private static final double HEADING_TOLERANCE_DEG = 5.0;
 
     private static final double MIN_DRIVE_POWER = 0.08;
     private static final double MIN_TURN_POWER = 0.06;
@@ -74,8 +74,7 @@ public class autonomous_close_all extends LinearOpMode {
             forwardCorrection = clip(forwardCorrection, -0.14, 0.14);
 
             boolean aligned =
-                    Math.abs(turnCorrection) < 0.025 &&
-                            Math.abs(forwardCorrection) < 0.025;
+                    Math.abs(turnCorrection) < 0.025;
 
             if (aligned) {
                 if (!wasStable) {
@@ -93,7 +92,7 @@ public class autonomous_close_all extends LinearOpMode {
             }
 
             drive.drive(
-                    forwardCorrection,
+                    0,
                     0,
                     turnCorrection,
                     1.0
@@ -130,7 +129,7 @@ public class autonomous_close_all extends LinearOpMode {
 
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
-        pinpoint.setOffsets(10.5, 18, DistanceUnit.CM);
+        pinpoint.setOffsets(12.8, 14.8, DistanceUnit.CM);
 
         pinpoint.setEncoderResolution(
                 GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD
@@ -158,7 +157,7 @@ public class autonomous_close_all extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            driveToPose(-76, 35, 84, 0.3);
+            driveToPose(70, 40, 84, 0.3);
             boolean aligned = limelightAlign(1.5, 0.35);
             telemetry.addData("Limelight aligned", aligned);
             telemetry.update();
@@ -173,7 +172,7 @@ public class autonomous_close_all extends LinearOpMode {
                 telemetry.addLine("Intaking...");
                 telemetry.update();
             }
-            driveToPose(-76, 35, 84, 0.3);
+            driveToPose(70, 40, 84, 0.3);
             aligned = limelightAlign(1.5, 0.35);
             telemetry.addData("Limelight aligned", aligned);
             telemetry.update();
@@ -188,7 +187,7 @@ public class autonomous_close_all extends LinearOpMode {
                 telemetry.addLine("Intaking...");
                 telemetry.update();
             }
-            driveToPose(-76, 35, 84, 0.3);//outtake
+            driveToPose(70, 40, 84, 0.3);//outtake
             aligned = limelightAlign(1.5, 0.35);
             telemetry.addData("Limelight aligned", aligned);
             telemetry.update();
@@ -203,7 +202,7 @@ public class autonomous_close_all extends LinearOpMode {
                 telemetry.addLine("Intaking...");
                 telemetry.update();
             }
-            driveToPose(-76, 35, 84, 0.3);
+            driveToPose(70, 40, 84, 0.3);
             aligned = limelightAlign(1.5, 0.35);
             telemetry.addData("Limelight aligned", aligned);
             telemetry.update();
@@ -227,9 +226,9 @@ public class autonomous_close_all extends LinearOpMode {
             double currentY = pose.getY(DistanceUnit.CM);
             double currentHeading = pose.getHeading(AngleUnit.DEGREES);
 
-            double errorX = targetXcm - currentX;
+            double errorX = -(targetXcm - currentX);
             double errorY = targetYcm - currentY;
-            double errorHeading = angleWrap(targetHeadingDeg - currentHeading);
+            double errorHeading = angleWrap(-(targetHeadingDeg - currentHeading));
 
             double distanceError = Math.hypot(errorX, errorY);
 

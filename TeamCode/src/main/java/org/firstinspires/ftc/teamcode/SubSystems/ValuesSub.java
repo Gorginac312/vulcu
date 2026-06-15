@@ -20,12 +20,12 @@ public class ValuesSub {
     public static double INTF = 17;
 
     //INDEXER
-    public static double intakepos1 = 0.03;
-    public static double intakepos2 = 0.16;
-    public static double intakepos3 = 0.29;
-    public static double outtakepos1 = 0.1;
-    public static double outtakepos2 = 0.22;
-    public static double outtakepos3 = 0.35;
+    public static double intakepos1 = 0.04;
+    public static double intakepos2 = 0.17;
+    public static double intakepos3 = 0.305;
+    public static double outtakepos1 = 0.24;
+    public static double outtakepos2 = 0.37;
+    public static double outtakepos3 = 0.505;
 
     //OUTTAKECONTINU
     public static double outtakepower = 0.67;//🤣🤣🤣
@@ -35,7 +35,10 @@ public class ValuesSub {
     public static double yawconstant = 0.15;
     public static double taconstant = 0.2;
     public static double targetarea = 2;
-    public static double taTolerance = 0.2;
+    public static double taTolerance = 0.5;
+    public static double txtolerance = 0.5;
+    public static double yawtolerance = 0.5;
+
 
     //INTAKESERVO
     public static double servoint = 0.5;

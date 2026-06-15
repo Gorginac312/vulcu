@@ -59,9 +59,15 @@ public void update() {
                 return 0;
             }
             tx = result.getTx();
-            return tx * ValuesSub.txconstant;
+            double error = tx;
+            if (Math.abs(error) < ValuesSub.txtolerance) {
+                return 0;
+            }
+
+            return error * ValuesSub.txconstant;
+        } else {
+            return 0;
         }
-        else return 0;
     }
     public double getYawCorrection(boolean control) {
         if (control) {
@@ -76,10 +82,14 @@ public void update() {
             pose = fiducials.get(0).getTargetPoseCameraSpace();
 
             yaw = pose.getOrientation().getYaw();
+            double error = yaw;
+            if (Math.abs(error) < ValuesSub.yawtolerance) {
+                return 0;
+            }
 
-            return -yaw * ValuesSub.yawconstant;
+            return error * ValuesSub.yawconstant;
+        } else {
+            return 0;
         }
-        else return 0;
-    }
-}
+    }}
 
