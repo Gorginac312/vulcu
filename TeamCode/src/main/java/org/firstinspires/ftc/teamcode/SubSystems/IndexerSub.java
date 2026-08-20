@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import static org.firstinspires.ftc.teamcode.SubSystems.ValuesSub.intakepos1;
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class IndexerSub {
-    private DriveSub drive;
+    public DriveSub drive;
     private final Servo Indexer;
     private final Servo IntakeServo;
     private final RevColorSensorV3 Beam;
@@ -42,6 +45,8 @@ public class IndexerSub {
         return sensorEnabled;
     }
     public double GetIndexState() { return IndexState;}
+
+    private int detectionCount = 0;
     public IndexerSub(HardwareMap hardwareMap) {
         Indexer = hardwareMap.get(Servo.class , "Indexer");
         Beam = hardwareMap.get(RevColorSensorV3.class , "Beam");
@@ -51,7 +56,6 @@ public class IndexerSub {
         IntakeServo = hardwareMap.get(Servo.class , "IntakeServo");
         Indexer.setPosition(0.0);
         IntakeServo.setPosition(0.65);
-        drive = new DriveSub(hardwareMap);
     }
     public void IntakeServo(boolean toggle) {
         if(toggle) {IntakeServo.setPosition(0.5);}
@@ -75,20 +79,33 @@ public class IndexerSub {
             Sensor();
         }
     }
+
     public void Sensor() {
         double d = Beam.getDistance(DistanceUnit.CM);
-        boolean isClose = (d < 5);
-        if(isClose && !objectDetected) {
+        boolean isClose = (d < 3.0 && d > 0.1); // Valid distance filter
+
+        if (isClose) {
+            detectionCount++;
+        } else {
+            detectionCount = 0; // Reset counter if object disappears
+        }
+
+        // Require 3 consecutive positive loops (~30ms) to register as a real object
+        boolean confirmedClose = (detectionCount >= 3);
+
+        if (confirmedClose && !objectDetected) {
             i++;
-            if(i > 3) i = 1;
+            if (i > 3) i = 1;
             updateIndexer();
             balls++;
-            if(balls >= 3){
+
+            if (balls >= 3) {
                 sensorEnabled = false;
                 full = true;
             }
         }
-        objectDetected = isClose;
+
+        objectDetected = confirmedClose;
     }
     public void updateIndexer() {
 
@@ -163,53 +180,70 @@ public class IndexerSub {
     }
 
     public boolean autonomyintake() {
-        Sensor();
+        double intrpm = (ValuesSub.targetINT * ValuesSub.TicksPerRevOUT) / 60.0;
+
+        Sensor(); // Checks beam break / distance sensor
 
         if (full) {
-            drive.drive(0, 0, 0, 1.0);
             IntakeMotor.setPower(0.0);
-            return true;
+            return true; // Finished intaking 3 balls
         }
-        IntakeMotor.setPower(ValuesSub.targetINT);
-        drive.drive(-0.2, 0, 0, 1.0);
 
-        return false;
-    }public boolean autonomyouttake() {
+        IntakeMotor.setPower(intrpm);
+        return false; // Still running
+    }
+    public void resetIndexState() {
+        this.IndexState = 0;
+        this.IndexTime.reset();
+        this.full = false;
+        this.balls = 0;
+        this.i = 0;
+        this.o = 0;
+        this.sensorEnabled = true;
+    } public boolean autonomyouttake() {
+        this.sensorEnabled = false;
+        // STATE 0: Start flywheel motor and reset timer
         if (IndexState == 0) {
+            double outrpm = (ValuesSub.targetOUT * ValuesSub.TicksPerRevOUT) / 60.0;
+            MO1.setVelocity(outrpm);
+
+            IndexTime.reset(); // Start 1-second spin-up timer
             IndexState = 1;
+            return false;
+        }
+
+        // STATE 1: Wait 1 second for flywheel to spin up, then push first ring/ball
+        if (IndexState == 1 && IndexTime.seconds() > 1.0) {
+            OuttakeContinu.setPower(ValuesSub.outtakepower);
             Indexer.setPosition(ValuesSub.outtakepos1);
             IndexTime.reset();
-
-            OuttakeContinu.setPower(ValuesSub.outtakepower);
-            MO1.setVelocity(ValuesSub.targetOUT);
-
+            IndexState = 2;
             return false;
         }
 
-        if (IndexState == 1 && IndexTime.seconds() > 0.5) {
+        // STATE 2: Push second ring/ball after 0.5s
+        if (IndexState == 2 && IndexTime.seconds() > 0.5) {
             Indexer.setPosition(ValuesSub.outtakepos2);
             IndexTime.reset();
-            IndexState = 2;
-
+            IndexState = 3;
             return false;
         }
 
-        if (IndexState == 2 && IndexTime.seconds() > 0.5) {
+        // STATE 3: Push third ring/ball after 0.5s
+        if (IndexState == 3 && IndexTime.seconds() > 0.5) {
             Indexer.setPosition(ValuesSub.outtakepos3);
             IndexTime.reset();
-            IndexState = 3;
-
+            IndexState = 4;
             return false;
         }
 
-        if (IndexState == 3 && IndexTime.seconds() > 0.5) {
-            IndexState = 0;
-            IndexTime.reset();
+        // STATE 4: Clean up, turn off motors, and finish
+        if (IndexState == 4 && IndexTime.seconds() > 0.5) {
+            IndexState = 0; // Reset for next use
 
             MO1.setVelocity(0.0);
             OuttakeContinu.setPower(0.0);
-
-            return true;
+            return true; // Finished outtake sequence!
         }
 
         return false;

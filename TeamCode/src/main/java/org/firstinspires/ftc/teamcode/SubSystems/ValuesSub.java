@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 public class ValuesSub {
     //OUTTAKE
-    public static double targetOUT = 3000;
+    public static double targetOUT = 2800;
     public static double TicksPerRevOUT = 28;
     public static double OUTP =350;
     public static double OUTI = 0;
@@ -12,7 +12,7 @@ public class ValuesSub {
     public static double OUTF = 10;
 
     //INTAKE
-    public static double targetINT = 2400;
+    public static double targetINT = 2200;
     public static double TicksPerRevINT = 28;
     public static double INTP = 26;
     public static double INTI = 0;
@@ -20,12 +20,12 @@ public class ValuesSub {
     public static double INTF = 17;
 
     //INDEXER
-    public static double intakepos1 = 0.04;
-    public static double intakepos2 = 0.17;
-    public static double intakepos3 = 0.305;
-    public static double outtakepos1 = 0.24;
-    public static double outtakepos2 = 0.37;
-    public static double outtakepos3 = 0.505;
+    public static double intakepos1 = 0.07;
+    public static double intakepos2 = 0.2;
+    public static double intakepos3 = 0.33;
+    public static double outtakepos1 = 0;
+    public static double outtakepos2 = 0.13;
+    public static double outtakepos3 = 0.26;
 
     //OUTTAKECONTINU
     public static double outtakepower = 0.67;//🤣🤣🤣

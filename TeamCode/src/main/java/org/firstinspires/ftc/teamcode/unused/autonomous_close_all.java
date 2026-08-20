@@ -1,12 +1,11 @@
 
-package org.firstinspires.ftc.teamcode.autonomy;
+package org.firstinspires.ftc.teamcode.unused;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.GoBildaPinpointDriver;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -109,7 +108,7 @@ public class autonomous_close_all extends LinearOpMode {
         return false;
     }@Override
     public void runOpMode() {
-        indexer = new IndexerSub(hardwareMap);
+        indexer = new IndexerSub(hardwareMap , drive);
         limelight = new LimelightSub(hardwareMap);
         drive = new DriveSub(hardwareMap);
 
