@@ -43,7 +43,7 @@ public class TeleopMain extends OpMode {
         drive = new DriveSub(hardwareMap);
         intake = new IntakeSub(hardwareMap);
         outtake = new OuttakeSub(hardwareMap);
-        indexer = new IndexerSub(hardwareMap);
+        indexer = new IndexerSub(hardwareMap , drive);
         limelight = new LimelightSub(hardwareMap);
 
 

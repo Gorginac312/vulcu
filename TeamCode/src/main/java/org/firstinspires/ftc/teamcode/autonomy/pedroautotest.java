@@ -218,7 +218,7 @@ public class pedroautotest extends LinearOpMode {
 
         // Instantiate Subsystems in proper sequence
         drive = new DriveSub(hardwareMap);
-        indexer = new IndexerSub(hardwareMap);
+        indexer = new IndexerSub(hardwareMap , drive);
 
         buildPaths();
 

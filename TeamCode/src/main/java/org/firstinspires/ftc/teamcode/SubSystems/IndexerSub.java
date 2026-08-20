@@ -23,12 +23,13 @@ public class IndexerSub {
     private boolean lastintake = false;
     private boolean lastouttake = false;
     private boolean lastAutoOn = false;
-    private int o = 0;
-    private int i = 0;
+    public int o = 0;
+    public int i = 0;
     //auto
     private ElapsedTime IndexTime = new ElapsedTime();
     private int IndexState = 0;
     private ElapsedTime fullTimer = new ElapsedTime();
+    private ElapsedTime autointake = new ElapsedTime();
     //senzor
     private boolean objectDetected = false;
     private boolean sensorEnabled = false;
@@ -45,9 +46,11 @@ public class IndexerSub {
         return sensorEnabled;
     }
     public double GetIndexState() { return IndexState;}
+    double I = 0;
 
     private int detectionCount = 0;
-    public IndexerSub(HardwareMap hardwareMap) {
+    public IndexerSub(HardwareMap hardwareMap , DriveSub drivesub) {
+        this.drive = drivesub;
         Indexer = hardwareMap.get(Servo.class , "Indexer");
         Beam = hardwareMap.get(RevColorSensorV3.class , "Beam");
         OuttakeContinu = hardwareMap.get(DcMotor.class , "OuttakeContinu");
@@ -167,18 +170,6 @@ public class IndexerSub {
         lastAutoOn = AutoOn;
 
     }
-    public void AutonomySensorToggle(){
-        if(full) {
-            sensorEnabled = false;//se opreste automat dupa 3 bile//
-        }
-        if(!full) {
-            sensorEnabled = !sensorEnabled;//daca nu sunt 3 bile si este apasat joystick left sensorEnabled devine true//
-        }
-        if(sensorEnabled) {
-            Sensor();
-        }
-    }
-
     public boolean autonomyintake() {
         double intrpm = (ValuesSub.targetINT * ValuesSub.TicksPerRevOUT) / 60.0;
 
@@ -192,16 +183,58 @@ public class IndexerSub {
         IntakeMotor.setPower(intrpm);
         return false; // Still running
     }
+    public void startAutonomyIntake2() {
+        i = 1;
+        autointake.reset();
+        updateIndexer();
+    }
+    public boolean autonomyintake2() {
+
+        double intrpm =
+                (ValuesSub.targetINT * ValuesSub.TicksPerRevOUT) / 60.0;
+
+        IntakeMotor.setVelocity(intrpm);
+        drive.drive(0.2, 0, 0, 1);
+
+        if (i == 1 && autointake.seconds() > 0.5) {
+            i = 2;
+            updateIndexer();
+            autointake.reset();
+        }
+
+        if (i == 2 && autointake.seconds() > 0.3) {
+            i = 3;
+            updateIndexer();
+            autointake.reset();
+        }
+
+        if (i == 3 && autointake.seconds() > 0.5) {
+            IntakeMotor.setVelocity(0);
+            drive.drive(0, 0, 0, 0);
+            i = 0;
+            return true;
+        }
+
+        return false;
+    }
     public void resetIndexState() {
-        this.IndexState = 0;
-        this.IndexTime.reset();
-        this.full = false;
-        this.balls = 0;
-        this.i = 0;
-        this.o = 0;
-        this.sensorEnabled = true;
-    } public boolean autonomyouttake() {
-        this.sensorEnabled = false;
+        IndexState = 0;
+        IndexTime.reset();
+        full = false;
+        balls = 0;
+        i = 0;
+        o = 0;
+        sensorEnabled = true;
+    }
+    public void resetOuttakeState() {
+        IndexState = 0;
+        IndexTime.reset();
+        o = 0;
+        i = 0;
+    }
+
+    public boolean autonomyouttake() {
+        sensorEnabled = false;
         // STATE 0: Start flywheel motor and reset timer
         if (IndexState == 0) {
             double outrpm = (ValuesSub.targetOUT * ValuesSub.TicksPerRevOUT) / 60.0;

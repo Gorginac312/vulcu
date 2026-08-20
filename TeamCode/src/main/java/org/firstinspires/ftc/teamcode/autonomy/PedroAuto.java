@@ -210,7 +210,7 @@ public class PedroAuto extends LinearOpMode {
         intake = new IntakeSub(hardwareMap);
         outtake = new OuttakeSub(hardwareMap);
         drive = new DriveSub(hardwareMap);
-        indexer = new IndexerSub(hardwareMap);
+        indexer = new IndexerSub(hardwareMap , drive);
 
         buildPaths();
 
