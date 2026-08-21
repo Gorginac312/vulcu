@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 public class ValuesSub {
     //OUTTAKE
-    public static double targetOUT = 2800;
+    public static double targetOUT = 2500;
     public static double TicksPerRevOUT = 28;
     public static double OUTP =350;
     public static double OUTI = 0;

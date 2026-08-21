@@ -21,7 +21,7 @@ public class intake_auto_test extends OpMode {
     @Override
     public void init() {
         drive = new DriveSub(hardwareMap);
-        indexer = new IndexerSub(hardwareMap);
+        indexer = new IndexerSub(hardwareMap , drive);
         Indexer = hardwareMap.get(Servo.class , "Indexer");
         Indexer.setPosition(intakepos1);
 

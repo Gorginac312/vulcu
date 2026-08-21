@@ -59,6 +59,10 @@ public class IndexerSub {
         IntakeServo = hardwareMap.get(Servo.class , "IntakeServo");
         Indexer.setPosition(0.0);
         IntakeServo.setPosition(0.65);
+
+        MO1.setDirection(DcMotor.Direction.REVERSE);
+        MO1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MO1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void IntakeServo(boolean toggle) {
         if(toggle) {IntakeServo.setPosition(0.5);}
@@ -194,23 +198,21 @@ public class IndexerSub {
                 (ValuesSub.targetINT * ValuesSub.TicksPerRevOUT) / 60.0;
 
         IntakeMotor.setVelocity(intrpm);
-        drive.drive(0.2, 0, 0, 1);
 
-        if (i == 1 && autointake.seconds() > 0.5) {
+        if (i == 1 && autointake.seconds() > 2) {
             i = 2;
             updateIndexer();
             autointake.reset();
         }
 
-        if (i == 2 && autointake.seconds() > 0.3) {
+        if (i == 2 && autointake.seconds() > 2) {
             i = 3;
             updateIndexer();
             autointake.reset();
         }
 
-        if (i == 3 && autointake.seconds() > 0.5) {
+        if (i == 3 && autointake.seconds() > 2) {
             IntakeMotor.setVelocity(0);
-            drive.drive(0, 0, 0, 0);
             i = 0;
             return true;
         }
@@ -239,7 +241,6 @@ public class IndexerSub {
         if (IndexState == 0) {
             double outrpm = (ValuesSub.targetOUT * ValuesSub.TicksPerRevOUT) / 60.0;
             MO1.setVelocity(outrpm);
-
             IndexTime.reset(); // Start 1-second spin-up timer
             IndexState = 1;
             return false;

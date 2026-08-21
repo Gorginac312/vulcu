@@ -47,9 +47,11 @@
                 .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
                 .yawScalar(1.009);
 
-        public static PathConstraints pathConstraints = new PathConstraints(0.99, 100,
-                0.9,
-                1.1);
+        public static PathConstraints pathConstraints =
+                new PathConstraints(0.99, 100, 0.9, 1.1);
+
+        public static PathConstraints intakePathConstraints =
+                new PathConstraints(0.35, 50, 0.9, 1.1);
 
         public static Follower createFollower(HardwareMap hardwareMap) {
             return new FollowerBuilder(followerConstants, hardwareMap)

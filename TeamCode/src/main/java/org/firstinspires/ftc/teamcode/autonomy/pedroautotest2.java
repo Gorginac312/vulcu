@@ -23,165 +23,332 @@ public class pedroautotest2 extends LinearOpMode {
     private int pathState;
     private boolean isStateInit = true;
 
-    private final Pose startPose = new Pose(22.482, 118.459, Math.toRadians(90));
+    private final Pose startPose =
+            new Pose(22.498, 117.762, Math.toRadians(90));
 
-    private PathChain path1, path2, path4, path6;
-    private void followReturnPath() {
-        PathChain returnPath = follower.pathBuilder()
+    private PathChain path1;
+    private PathChain path2;
+    private PathChain path3;
+    private PathChain path4;
+    private PathChain path5;
+    private PathChain path6;
+    private PathChain path7;
+    private PathChain path8;
+    private PathChain path9;
+    private PathChain path10;
+
+    public void buildPaths() {
+
+        path1 = follower.pathBuilder()
                 .addPath(new BezierLine(
-                        follower.getPose(),
-                        new Pose(60, 81)
+                        new Pose(22.498, 117.762),
+                        new Pose(58.000, 83.000)
                 ))
                 .setLinearHeadingInterpolation(
-                        follower.getPose().getHeading(),
+                        Math.toRadians(90),
                         Math.toRadians(315)
                 )
                 .build();
 
-        follower.followPath(returnPath, true);
-    }
-
-    public void buildPaths() {
-        path1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(22.482, 118.459), new Pose(60, 81)))
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(315))
-                .build();
-
         path2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(60, 81), new Pose(42, 83)))
-                .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
-                .build();
+                .addPath(new BezierLine(
+                        new Pose(58.000, 83.000),
+                        new Pose(40.000, 83.000)
+                ))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(315),
+                        Math.toRadians(180)
+                ).
 
+        path3 = follower.pathBuilder()
+                .addPath(new BezierLine(
+                        new Pose(40.000, 83.000),
+                        new Pose(12.000, 83.000)
+                ))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(180),
+                        Math.toRadians(180)
+                )
+                .setPathConstraints(Constants.intakePathConstraints)
+                .build();
 
         path4 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(60, 81), new Pose(40, 60)))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(315))
+                .addPath(new BezierLine(
+                        new Pose(12.000, 83.000),
+                        new Pose(58.000, 83.000)
+                ))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(180),
+                        Math.toRadians(315)
+                )
                 .build();
 
+        path5 = follower.pathBuilder()
+                .addPath(new BezierLine(
+                        new Pose(58.000, 83.000),
+                        new Pose(40.000, 59.000)
+                ))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(315),
+                        Math.toRadians(180)
+                )
+                .build();
 
         path6 = follower.pathBuilder()
-                .addPath(new BezierLine(new Pose(60, 81), new Pose(40, 35)))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .addPath(new BezierLine(
+                        new Pose(40.000, 59.000),
+                        new Pose(12.000, 59.000)
+                ))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(180),
+                        Math.toRadians(180)
+                )
+                .setPathConstraints(Constants.intakePathConstraints)
                 .build();
 
+        path7 = follower.pathBuilder()
+                .addPath(new BezierLine(
+                        new Pose(12.000, 59.000),
+                        new Pose(58.000, 83.000)
+                ))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(180),
+                        Math.toRadians(315)
+                )
+                .build();
+
+        path8 = follower.pathBuilder()
+                .addPath(new BezierLine(
+                        new Pose(58.000, 83.000),
+                        new Pose(40.000, 35.000)
+                ))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(315),
+                        Math.toRadians(180)
+                )
+                .build();
+
+        path9 = follower.pathBuilder()
+                .addPath(new BezierLine(
+                        new Pose(40.000, 35.000),
+                        new Pose(12.000, 35.000)
+                ))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(180),
+                        Math.toRadians(180)
+                )
+                .setPathConstraints(Constants.intakePathConstraints)
+                .build();
+
+        path10 = follower.pathBuilder()
+                .addPath(new BezierLine(
+                        new Pose(12.000, 35.000),
+                        new Pose(58.000, 83.000)
+                ))
+                .setLinearHeadingInterpolation(
+                        Math.toRadians(180),
+                        Math.toRadians(315)
+                )
+                .build();
     }
 
     public void autonomousPathUpdate() {
+
         switch (pathState) {
+
+            // =========================================================
+            // 0: START -> FIRST SHOOTING POSITION
+            // =========================================================
             case 0:
+
                 follower.followPath(path1, true);
                 indexer.resetOuttakeState();
+
                 setPathState(1);
                 break;
 
+
+            // =========================================================
+            // 1: FIRST OUTTAKE
+            // =========================================================
             case 1:
-                if (isStateInit) {
-                    isStateInit = false;
-                }
-                if (!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 0.2) {
+
+                if (!follower.isBusy()
+                        && actionTimer.getElapsedTimeSeconds() > 0.2) {
+
                     if (indexer.autonomyouttake()) {
+
                         follower.followPath(path2, true);
                         setPathState(2);
                     }
                 }
                 break;
 
+
+            // =========================================================
+            // 2: GO TO FIRST INTAKE
+            // =========================================================
             case 2:
+
                 if (isStateInit) {
                     isStateInit = false;
-                    indexer.startAutonomyIntake2();
                 }
-                boolean indexerFinished = indexer.autonomyintake2();
 
-                if (indexerFinished || (!follower.isBusy() &&
-                        actionTimer.getElapsedTimeSeconds() > 0.5)) {
+                if (!follower.isBusy()) {
 
-                    indexer.resetOuttakeState();
+                    indexer.startAutonomyIntake2();
 
-                    followReturnPath();
+                    follower.followPath(path3, true);
+
                     setPathState(3);
                 }
                 break;
 
+
+            // =========================================================
+            // 3: FIRST INTAKE CREEP
+            // Intake runs while Pedro follows path3
+            // =========================================================
             case 3:
-                if (isStateInit) {
-                    isStateInit = false;
-                }
 
-                if (!follower.isBusy() &&
-                        actionTimer.getElapsedTimeSeconds() > 0.2) {
+                indexer.autonomyintake2();
 
-                    if (indexer.autonomyouttake()) {
-                        follower.followPath(path4, true);
-                        setPathState(4);
-                    }
+                if (!follower.isBusy()) {
+
+                    indexer.resetOuttakeState();
+
+                    follower.followPath(path4, true);
+
+                    setPathState(4);
                 }
                 break;
 
+
+            // =========================================================
+            // 4: RETURN TO SHOOTING POSITION
+            // =========================================================
             case 4:
-                if (isStateInit) {
-                    isStateInit = false;
-                    indexer.startAutonomyIntake2();
-                }
 
-                boolean indexerFinished4 = indexer.autonomyintake2();
-
-                if (indexerFinished4 || (!follower.isBusy() &&
-                        actionTimer.getElapsedTimeSeconds() > 0.5)) {
-
-                    indexer.resetOuttakeState();
-
-                    followReturnPath();
-                    setPathState(5);
-                }
-                break;
-
-            case 5:
-                if (isStateInit) {
-                    isStateInit = false;
-                }
-
-                if (!follower.isBusy() &&
-                        actionTimer.getElapsedTimeSeconds() > 0.2) {
+                if (!follower.isBusy()
+                        && actionTimer.getElapsedTimeSeconds() > 0.2) {
 
                     if (indexer.autonomyouttake()) {
-                        follower.followPath(path6, true);
-                        setPathState(6);
+
+                        follower.followPath(path5, true);
+                        setPathState(5);
                     }
                 }
                 break;
 
-            case 6:
+
+            // =========================================================
+            // 5: GO TO SECOND INTAKE
+            // =========================================================
+            case 5:
+
                 if (isStateInit) {
                     isStateInit = false;
-                    indexer.startAutonomyIntake2();
                 }
-                boolean indexerFinished6 = indexer.autonomyintake2();
+
+                if (!follower.isBusy()) {
+
+                    indexer.startAutonomyIntake2();
+
+                    follower.followPath(path6, true);
+
+                    setPathState(6);
+                }
+                break;
 
 
-                if (indexerFinished6 || (!follower.isBusy() &&
-                        actionTimer.getElapsedTimeSeconds() > 0.5)) {
+            // =========================================================
+            // 6: SECOND INTAKE CREEP
+            // =========================================================
+            case 6:
+
+                indexer.autonomyintake2();
+
+                if (!follower.isBusy()) {
 
                     indexer.resetOuttakeState();
 
-                    followReturnPath();
+                    follower.followPath(path7, true);
+
                     setPathState(7);
                 }
                 break;
 
+
+            // =========================================================
+            // 7: RETURN TO SHOOTING POSITION
+            // =========================================================
             case 7:
+
+                if (!follower.isBusy()
+                        && actionTimer.getElapsedTimeSeconds() > 0.2) {
+
+                    if (indexer.autonomyouttake()) {
+
+                        follower.followPath(path8, true);
+                        setPathState(8);
+                    }
+                }
+                break;
+
+
+            // =========================================================
+            // 8: GO TO THIRD INTAKE
+            // =========================================================
+            case 8:
+
                 if (isStateInit) {
                     isStateInit = false;
                 }
 
-                if (!follower.isBusy() &&
-                        actionTimer.getElapsedTimeSeconds() > 0.2) {
+                if (!follower.isBusy()) {
+
+                    indexer.startAutonomyIntake2();
+
+                    follower.followPath(path9, true);
+
+                    setPathState(9);
+                }
+                break;
+
+
+            // =========================================================
+            // 9: THIRD INTAKE CREEP
+            // =========================================================
+            case 9:
+
+                indexer.autonomyintake2();
+
+                if (!follower.isBusy()) {
+
+                    indexer.resetOuttakeState();
+
+                    follower.followPath(path10, true);
+
+                    setPathState(10);
+                }
+                break;
+
+
+            // =========================================================
+            // 10: FINAL RETURN + FINAL OUTTAKE
+            // =========================================================
+            case 10:
+
+                if (!follower.isBusy()
+                        && actionTimer.getElapsedTimeSeconds() > 0.2) {
 
                     if (indexer.autonomyouttake()) {
+
                         setPathState(-1);
                     }
                 }
                 break;
+
 
             default:
                 break;
@@ -196,13 +363,14 @@ public class pedroautotest2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
         actionTimer = new Timer();
+
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
 
-        // Instantiate Subsystems
         drive = new DriveSub(hardwareMap);
-        indexer = new IndexerSub(hardwareMap , drive);
+        indexer = new IndexerSub(hardwareMap, drive);
 
         buildPaths();
 
@@ -211,13 +379,19 @@ public class pedroautotest2 extends LinearOpMode {
         setPathState(0);
 
         while (opModeIsActive() && !isStopRequested()) {
+
             follower.update();
+
             autonomousPathUpdate();
 
             telemetry.addData("Path State", pathState);
             telemetry.addData("X", follower.getPose().getX());
             telemetry.addData("Y", follower.getPose().getY());
-            telemetry.addData("Heading", follower.getPose().getHeading());
+            telemetry.addData(
+                    "Heading",
+                    Math.toDegrees(follower.getPose().getHeading())
+            );
+
             telemetry.update();
         }
     }
