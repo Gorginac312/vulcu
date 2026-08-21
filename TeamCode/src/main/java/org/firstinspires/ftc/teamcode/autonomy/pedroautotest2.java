@@ -58,7 +58,8 @@ public class pedroautotest2 extends LinearOpMode {
                 .setLinearHeadingInterpolation(
                         Math.toRadians(315),
                         Math.toRadians(180)
-                ).
+                )
+                .build();
 
         path3 = follower.pathBuilder()
                 .addPath(new BezierLine(
@@ -69,7 +70,6 @@ public class pedroautotest2 extends LinearOpMode {
                         Math.toRadians(180),
                         Math.toRadians(180)
                 )
-                .setPathConstraints(Constants.intakePathConstraints)
                 .build();
 
         path4 = follower.pathBuilder()
@@ -103,7 +103,6 @@ public class pedroautotest2 extends LinearOpMode {
                         Math.toRadians(180),
                         Math.toRadians(180)
                 )
-                .setPathConstraints(Constants.intakePathConstraints)
                 .build();
 
         path7 = follower.pathBuilder()
@@ -137,7 +136,6 @@ public class pedroautotest2 extends LinearOpMode {
                         Math.toRadians(180),
                         Math.toRadians(180)
                 )
-                .setPathConstraints(Constants.intakePathConstraints)
                 .build();
 
         path10 = follower.pathBuilder()
@@ -156,9 +154,7 @@ public class pedroautotest2 extends LinearOpMode {
 
         switch (pathState) {
 
-            // =========================================================
-            // 0: START -> FIRST SHOOTING POSITION
-            // =========================================================
+
             case 0:
 
                 follower.followPath(path1, true);
@@ -168,9 +164,7 @@ public class pedroautotest2 extends LinearOpMode {
                 break;
 
 
-            // =========================================================
-            // 1: FIRST OUTTAKE
-            // =========================================================
+
             case 1:
 
                 if (!follower.isBusy()
@@ -185,9 +179,6 @@ public class pedroautotest2 extends LinearOpMode {
                 break;
 
 
-            // =========================================================
-            // 2: GO TO FIRST INTAKE
-            // =========================================================
             case 2:
 
                 if (isStateInit) {
@@ -198,17 +189,12 @@ public class pedroautotest2 extends LinearOpMode {
 
                     indexer.startAutonomyIntake2();
 
-                    follower.followPath(path3, true);
+                    follower.followPath(path3, 0.2, true);
 
                     setPathState(3);
                 }
                 break;
 
-
-            // =========================================================
-            // 3: FIRST INTAKE CREEP
-            // Intake runs while Pedro follows path3
-            // =========================================================
             case 3:
 
                 indexer.autonomyintake2();
@@ -224,9 +210,6 @@ public class pedroautotest2 extends LinearOpMode {
                 break;
 
 
-            // =========================================================
-            // 4: RETURN TO SHOOTING POSITION
-            // =========================================================
             case 4:
 
                 if (!follower.isBusy()
@@ -241,9 +224,6 @@ public class pedroautotest2 extends LinearOpMode {
                 break;
 
 
-            // =========================================================
-            // 5: GO TO SECOND INTAKE
-            // =========================================================
             case 5:
 
                 if (isStateInit) {
@@ -254,16 +234,12 @@ public class pedroautotest2 extends LinearOpMode {
 
                     indexer.startAutonomyIntake2();
 
-                    follower.followPath(path6, true);
+                    follower.followPath(path6, 0.2, true);
 
                     setPathState(6);
                 }
                 break;
 
-
-            // =========================================================
-            // 6: SECOND INTAKE CREEP
-            // =========================================================
             case 6:
 
                 indexer.autonomyintake2();
@@ -279,9 +255,6 @@ public class pedroautotest2 extends LinearOpMode {
                 break;
 
 
-            // =========================================================
-            // 7: RETURN TO SHOOTING POSITION
-            // =========================================================
             case 7:
 
                 if (!follower.isBusy()
@@ -296,9 +269,6 @@ public class pedroautotest2 extends LinearOpMode {
                 break;
 
 
-            // =========================================================
-            // 8: GO TO THIRD INTAKE
-            // =========================================================
             case 8:
 
                 if (isStateInit) {
@@ -309,16 +279,13 @@ public class pedroautotest2 extends LinearOpMode {
 
                     indexer.startAutonomyIntake2();
 
-                    follower.followPath(path9, true);
+                    follower.followPath(path9, 0.2, true);
 
                     setPathState(9);
                 }
                 break;
 
 
-            // =========================================================
-            // 9: THIRD INTAKE CREEP
-            // =========================================================
             case 9:
 
                 indexer.autonomyintake2();
@@ -334,9 +301,6 @@ public class pedroautotest2 extends LinearOpMode {
                 break;
 
 
-            // =========================================================
-            // 10: FINAL RETURN + FINAL OUTTAKE
-            // =========================================================
             case 10:
 
                 if (!follower.isBusy()
